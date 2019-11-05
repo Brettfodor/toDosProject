@@ -3,51 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using todos.Models;
 
-namespace todo.Controllers
+namespace todos.Controllers
 {
     [Route("api/todos")]
     [ApiController]
     public class TodoController : ControllerBase
     {
-        List<string> all = new List<string>()
-        {"Remodel Bathroom",
-            "Finish my laser app",
-            "do things with kids"
-        };
+        //private static List<string> all = new List<string>()
+        //{
+        //    "Remodel Bathroom",
+        //    "Finish my laser app",
+        //    "Do things with kids"
+        //};
 
-        // GET api/values
+        private IRepository<Todo> todoRepo;
+
+        public TodoController(IRepository<Todo> todoRepo)
+        {
+            this.todoRepo = todoRepo;
+        }
+
+        // GET api/todos
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IEnumerable<Todo> Get()
         {
-            return all;
+            return todoRepo.GetAll();
         }
 
-        // GET api/values/5
+        // GET api/todos/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "todo";
+        public Todo Get(int id)
+        {   
+            return todoRepo.GetById(id);
         }
 
-        // POST api/values
+        // POST api/todos
         [HttpPost]
-        public ActionResult<IEnumerable<string>>Post([FromBody] string todo)
+        public IEnumerable<Todo> Post([FromBody] Todo todo)
         {
-            all.Add(todo);
-            return all;
+            todoRepo.Create(todo);
+            return todoRepo.GetAll();
         }
 
-        // PUT api/values/5
+        // PUT api/todos/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string todo)
+        public IEnumerable<Todo> Put([FromBody] Todo todo)
         {
+            todoRepo.Update(todo);
+            return todoRepo.GetAll();
         }
 
-        // DELETE api/values/5
+        // DELETE api/todos/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IEnumerable<Todo> Delete (int id)
         {
+            var todo = todoRepo.GetById(id);
+            todoRepo.Delete(todo);
+            return todoRepo.GetAll();
         }
     }
 }

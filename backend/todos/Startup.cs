@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using todos.Models;
 
 namespace todos
 {
@@ -25,15 +26,19 @@ namespace todos
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o.AddPolicy("My Policy", builder =>
-             {
-                 builder.AllowAnyOrigin()
-                 .AllowAnyMethod()
-                 .AllowAnyHeader();
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+            }));
 
-             }));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+            services.AddDbContext<TodoContext>();
+            services.AddScoped<IRepository<Todo>, TodoRepository>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +52,7 @@ namespace todos
             {
                 app.UseHsts();
             }
-            app.UseCors("My Policy");
+            app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseMvc();
         }

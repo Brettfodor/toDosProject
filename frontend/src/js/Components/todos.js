@@ -5,7 +5,11 @@ export default function Todos(toDos) {
               .map(toDo => {
                 return `
                     <li>
-                        <h3>${toDo}</h3>
+                        <h3>${toDo.name}</h3>
+                        <input class="toDo__id" type="hidden" value="${toDo.id}">
+                        <button class="edit-toDo__submit" >Edit</button>
+                        <button class="delete-toDo__submit">Delete</button>
+                        
                     </li>
                 `;
               })
